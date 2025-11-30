@@ -637,39 +637,45 @@ function getBuddhistLentDays(year) {
 
 // Toggle visibility of calculator sections
 function toggleSection(button) {
-    // Find the parent section
+        // Find the parent section
     const section = button.closest('.calculator-section');
 
     // Find the container that holds all calculator divs within this section
     const calculators = section.querySelectorAll('.calculator');
 
+    // Determine if any calculator is currently visible
+    let anyVisible = false;
+    for (const calculator of calculators) {
+        if (calculator.style.display !== 'none') {
+            anyVisible = true;
+            break;
+        }
+    }
+
     // Toggle visibility of each calculator in the section
-    for (const calculator of calculators) {
-        if (calculator.style.display === 'none' || calculator.style.display === '') {
-            calculator.style.display = 'block';
-        } else {
+    if (anyVisible) {
+        // If any are visible, hide all
+        for (const calculator of calculators) {
             calculator.style.display = 'none';
         }
-    }
-
-    // Toggle visibility as before
-    for (const calculator of calculators) {
-        if (calculator.style.display === 'none' || calculator.style.display === '') {
-            calculator.style.display = 'block';
-        } else {
-            calculator.style.display = 'none';
-        }
-    }
-
-    // Show eye emoji always as requested, but add visual feedback to button
-    button.innerHTML = '👁️';
-    // Toggle button appearance to indicate state
-    if (calculators[0].style.display !== 'none') {
-        // Content is visible - button appears active
-        button.style.backgroundColor = '#e74c3c'; // Red when content is visible
     } else {
+        // If all are hidden, show all
+        for (const calculator of calculators) {
+            calculator.style.display = 'block';
+        }
+    }
+
+    // Update the button text to show +/- based on visibility
+    const isHidden = calculators[0].style.display === 'none';
+    button.innerHTML = isHidden ? '+' : '−';
+
+    // Toggle button appearance to indicate state
+    if (isHidden) {
         // Content is hidden - button appears neutral
         button.style.backgroundColor = '#7f8c8d'; // Gray when content is hidden
+    } else {
+        // Content is visible - button appears active
+        button.style.backgroundColor = '#7f8c8d'; // Red when content is visible
     }
 }
 
