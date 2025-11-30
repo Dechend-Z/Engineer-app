@@ -73,6 +73,10 @@ main h2 {
     border-top: 5px solid #9b59b6;
 }
 
+.brown-section {
+    border-top: 5px solid #8B4513;
+}
+
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -211,6 +215,25 @@ footer {
     font-size: 0.9rem;
 }
 
+.collapsible-btn {
+    background-color: #7f8c8d;
+    color: white;
+    border: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    font-weight: bold;
+    cursor: pointer;
+    float: right;
+    margin-top: 5px;
+    margin-left: 10px;
+    transition: background-color 0.3s;
+}
+
+.collapsible-btn:hover {
+    background-color: #34495e;
+}
+
 @media (max-width: 768px) {
     .container {
         padding: 10px;
@@ -234,5 +257,11 @@ footer {
 
     .converter-controls button {
         min-width: 100%;
+    }
+
+    .collapsible-btn {
+        width: 20px;
+        height: 20px;
+        font-size: 0.8rem;
     }
 }

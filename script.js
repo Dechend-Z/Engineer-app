@@ -561,6 +561,59 @@ function getMovableHolidays(year) {
     return movableHolidays;
 }
 
+// Overtime Calculation Function
+function calculateOvertime() {
+    const hourlyRate = parseFloat(document.getElementById('hourly-rate').value);
+    const overtimeHours = parseFloat(document.getElementById('overtime-hours').value);
+    const overtimeType = document.getElementById('overtime-type').value;
+
+    if (isNaN(hourlyRate) || isNaN(overtimeHours)) {
+        const resultDiv = document.getElementById('overtime-result');
+        resultDiv.innerHTML = '<p class="warning">กรุณาป้อนอัตราค่าจ้างต่อชั่วโมงและจำนวนชั่วโมงล่วงเวลา</p>';
+        resultDiv.classList.add('show');
+        return;
+    }
+
+    if (hourlyRate <= 0 || overtimeHours <= 0) {
+        const resultDiv = document.getElementById('overtime-result');
+        resultDiv.innerHTML = '<p class="warning">อัตราค่าจ้างต่อชั่วโมงและจำนวนชั่วโมงล่วงเวลาต้องเป็นตัวเลขบวก</p>';
+        resultDiv.classList.add('show');
+        return;
+    }
+
+    let multiplier = 1;
+    let typeDescription = '';
+
+    switch(overtimeType) {
+        case 'weekday':
+            multiplier = 1.5;
+            typeDescription = 'วันธรรมดา (1.5 เท่า)';
+            break;
+        case 'weekend':
+            multiplier = 2;
+            typeDescription = 'วันหยุดเสาร์-อาทิตย์ (2 เท่า)';
+            break;
+        case 'holiday':
+            multiplier = 3;
+            typeDescription = 'วันหยุดนักขัตฤกษ์ (3 เท่า)';
+            break;
+    }
+
+    // Calculate overtime pay
+    const overtimePay = hourlyRate * multiplier * overtimeHours;
+
+    const resultDiv = document.getElementById('overtime-result');
+    resultDiv.innerHTML = `
+        <p><strong>อัตราค่าจ้างต่อชั่วโมง:</strong> ${hourlyRate.toFixed(2)} บาท</p>
+        <p><strong>จำนวนชั่วโมงล่วงเวลา:</strong> ${overtimeHours.toFixed(1)} ชั่วโมง</p>
+        <p><strong>ประเภทการทำงานล่วงเวลา:</strong> ${typeDescription}</p>
+        <p><strong>อัตราคูณ:</strong> ${multiplier} เท่า</p>
+        <p><strong>ค่าล่วงเวลาทั้งหมด:</strong> <span class="highlight">${overtimePay.toFixed(2)} บาท</span></p>
+        <p><em>คำนวณตามกฎหมายแรงงาน: วันธรรมดา 1.5 เท่า, วันหยุดสุดสัปดาห์ 2 เท่า, วันหยุดนักขัตฤกษ์ 3 เท่า</em></p>
+    `;
+    resultDiv.classList.add('show');
+}
+
 // Helper function to get approximate Buddhist Lent Days for a given year
 function getBuddhistLentDays(year) {
     // This is an approximation - actual dates vary by lunar calendar
@@ -580,6 +633,33 @@ function getBuddhistLentDays(year) {
     }
 
     return approxDates;
+}
+
+// Toggle visibility of calculator sections
+function toggleSection(button) {
+    // Find the parent section
+    const section = button.closest('.calculator-section');
+
+    // Find the container that holds all calculator divs within this section
+    const calculators = section.querySelectorAll('.calculator');
+
+    // Toggle visibility of each calculator in the section
+    let allHidden = true;
+    for (const calculator of calculators) {
+        if (calculator.style.display === 'none' || calculator.style.display === '') {
+            calculator.style.display = 'block';
+            allHidden = false;
+        } else {
+            calculator.style.display = 'none';
+        }
+    }
+
+    // Update the button text
+    if (allHidden) {
+        button.textContent = '+';
+    } else {
+        button.textContent = '−';
+    }
 }
 
 // Helper function to get lunar calendar holidays for a given year

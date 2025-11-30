@@ -17,7 +17,7 @@
             <div class="column">
                 <!-- Time Between Dates Calculator -->
                 <section class="calculator-section red-section">
-                    <h2><span class="emoji">📅</span> เครื่องคำนวนช่วงเวลา</h2>
+                    <h2><span class="emoji">📅</span> เครื่องคำนวนช่วงเวลา <button class="collapsible-btn" onclick="toggleSection(this)">−</button></h2>
 
                     <div class="calculator">
                         <h3>คำนวณช่วงเวลาจากวันที่</h3>
@@ -64,7 +64,7 @@
 
                 <!-- Number System Converter -->
                 <section class="calculator-section blue-section">
-                    <h2><span class="emoji">🔢</span> เครื่องแปลงเลขฐาน</h2>
+                    <h2><span class="emoji">🔢</span> เครื่องแปลงเลขฐาน <button class="collapsible-btn" onclick="toggleSection(this)">−</button></h2>
 
                     <div class="calculator">
                         <h3>ตัวแปลงเลขฐานสิบ, เลขฐานสอง, เลขฐานสิบหก</h3>
@@ -94,7 +94,7 @@
             <div class="column">
                 <!-- Battery Life Calculator -->
                 <section class="calculator-section green-section">
-                    <h2><span class="emoji">🔋</span> เครื่องคำนวนอายุการใช้งานแบตเตอรี่</h2>
+                    <h2><span class="emoji">🔋</span> เครื่องคำนวนอายุการใช้งานแบตเตอรี่ <button class="collapsible-btn" onclick="toggleSection(this)">−</button></h2>
 
                     <div class="calculator">
                         <h3>ประมาณการอายุการใช้งานแบตเตอรี่</h3>
@@ -135,7 +135,7 @@
 
                 <!-- Character Count Tool -->
                 <section class="calculator-section purple-section">
-                    <h2><span class="emoji">📝</span> เครื่องมือการนับตัวอักษร</h2>
+                    <h2><span class="emoji">📝</span> เครื่องมือการนับตัวอักษร <button class="collapsible-btn" onclick="toggleSection(this)">−</button></h2>
 
                     <div class="calculator">
                         <h3>ตัววิเคราะห์ข้อความ</h3>
@@ -145,6 +145,33 @@
                         </div>
                         <button onclick="analyzeText()">วิเคราะห์ข้อความ</button>
                         <div id="text-result" class="result"></div>
+                    </div>
+                </section>
+
+                <!-- Overtime Calculator -->
+                <section class="calculator-section brown-section">
+                    <h2><span class="emoji">⏰</span> เครื่องคำนวณค่าล่วงเวลา <button class="collapsible-btn" onclick="toggleSection(this)">−</button></h2>
+
+                    <div class="calculator">
+                        <h3>คำนวณค่าล่วงเวลาตามกฎหมายแรงงาน</h3>
+                        <div class="input-group">
+                            <label for="hourly-rate">อัตราค่าจ้างต่อชั่วโมง:</label>
+                            <input type="number" id="hourly-rate" placeholder="ป้อนอัตราค่าจ้างต่อชั่วโมง">
+                        </div>
+                        <div class="input-group">
+                            <label for="overtime-hours">จำนวนชั่วโมงล่วงเวลา:</label>
+                            <input type="number" id="overtime-hours" placeholder="ป้อนจำนวนชั่วโมงล่วงเวลา" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <label for="overtime-type">ประเภทการทำงานล่วงเวลา:</label>
+                            <select id="overtime-type">
+                                <option value="weekday">วันธรรมดา (1.5 เท่า)</option>
+                                <option value="weekend">วันหยุดเสาร์-อาทิตย์ (2 เท่า)</option>
+                                <option value="holiday">วันหยุดนักขัตฤกษ์ (3 เท่า)</option>
+                            </select>
+                        </div>
+                        <button onclick="calculateOvertime()">คำนวณค่าล่วงเวลา</button>
+                        <div id="overtime-result" class="result"></div>
                     </div>
                 </section>
 
