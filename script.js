@@ -652,11 +652,25 @@ function toggleSection(button) {
         }
     }
 
-    // Update the button text to show eye-based icon based on what the button will do next
-    // If calculators are now visible, show cross (to indicate it will hide when clicked)
-    // If calculators are now hidden, show open eye (to indicate it will show when clicked)
-    const areNowVisible = calculators[0].style.display !== 'none';
-    button.innerHTML = areNowVisible ? '⊖' : '👁️'; // Circle with minus to hide, open eye to show
+    // Toggle visibility as before
+    for (const calculator of calculators) {
+        if (calculator.style.display === 'none' || calculator.style.display === '') {
+            calculator.style.display = 'block';
+        } else {
+            calculator.style.display = 'none';
+        }
+    }
+
+    // Show eye emoji always as requested, but add visual feedback to button
+    button.innerHTML = '👁️';
+    // Toggle button appearance to indicate state
+    if (calculators[0].style.display !== 'none') {
+        // Content is visible - button appears active
+        button.style.backgroundColor = '#e74c3c'; // Red when content is visible
+    } else {
+        // Content is hidden - button appears neutral
+        button.style.backgroundColor = '#7f8c8d'; // Gray when content is hidden
+    }
 }
 
 // Helper function to get lunar calendar holidays for a given year
