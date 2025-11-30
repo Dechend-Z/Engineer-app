@@ -340,3 +340,215 @@ function clearConverter() {
     resultDiv.innerHTML = '<p>ป้อนค่าในช่องใดช่องหนึ่งและจะมีการแปลงเป็นรูปแบบอื่นโดยอัตโนมัติ</p>';
     resultDiv.classList.remove('show');
 }
+
+// Workdays Calculation Functions
+function isWeekend(date) {
+    const dayOfWeek = date.getDay(); // 0 = Sunday, 6 = Saturday
+    return dayOfWeek === 0 || dayOfWeek === 6; // Sunday or Saturday
+}
+
+function isPublicHoliday(date) {
+    // Format date to YYYY-MM-DD for comparison
+    const dateStr = date.toISOString().split('T')[0];
+
+    // Fixed-date public holidays in Thailand
+    const fixedHolidays = [
+        '01-01', // วันขึ้นปีใหม่สากล
+        '02-06', // วันคล้ายวันพระราชสมภพสมเด็จพระนางเจ้าสิริกิติ์ พระบรมราชินีนาถ
+        '04-06', // วันจักรี
+        '05-01', // วันแรงงานแห่งชาติ
+        '05-05', // วันฉัตรมงคล
+        '07-28', // วันคล้ายวันพระราชสมภพสมเด็จพระเจ้าอยู่หัว
+        '08-12', // วันเฉลิมพระชนมพรรษาสมเด็จพระนางเจ้าสิริกิติ์ พระบรมราชินีนาถ
+        '10-13', // วันคล้ายวันสวรรคตพระบาทสมเด็จพระปรมินทรมหาภูมิพลอดุลยเดช
+        '10-23', // วันปิยมหาราช
+        '12-05', // วันคล้ายวันพระราชสมภพพระบาทสมเด็จพระปรมินทรมหาภูมิพลอดุลยเดช
+        '12-10'  // วันรัฐธรรมนูญ
+    ];
+
+    // Check fixed-date holidays
+    const monthDay = dateStr.substring(5); // Extract MM-DD
+    if (fixedHolidays.includes(monthDay)) {
+        return true;
+    }
+
+    // Special calculations for holidays that depend on lunar calendar or specific rules
+    const year = date.getFullYear();
+
+    // Check for Songkran (April 13-15, but sometimes varies)
+    if (monthDay === '04-13' || monthDay === '04-14' || monthDay === '04-15') {
+        if (year >= 2017) { // From 2017, Songkran is celebrated for 3 days
+            return true;
+        } else { // Before 2017, only April 13-14
+            if (monthDay === '04-13' || monthDay === '04-14') {
+                return true;
+            }
+        }
+    }
+
+    // Check for movable holidays that may be announced by the government
+    const movableHolidays = getMovableHolidays(year);
+    if (movableHolidays.includes(dateStr)) {
+        return true;
+    }
+
+    // Check for Buddhist Lent Day (starts on the first day of the 11th month in the Thai lunar calendar)
+    // This is approximate and may vary by region
+    const buddhistLentDays = getBuddhistLentDays(year);
+    if (buddhistLentDays.includes(dateStr)) {
+        return true;
+    }
+
+    // Check for other lunar calendar holidays
+    const lunarHolidays = getLunarHolidays(year);
+    if (lunarHolidays.includes(dateStr)) {
+        return true;
+    }
+
+    return false;
+}
+
+// Helper function to get movable holidays that may change from year to year
+function getMovableHolidays(year) {
+    // Thai government may move some holidays for long weekends, etc.
+    // These are based on official announcements which are usually made annually
+    const movableHolidays = [];
+
+    // Add any specific movable holidays for the given year
+    // Example for specific years when certain holidays were moved (this would be updated annually)
+    if (year === 2024) {
+        // In 2024, there were several special holidays declared by the Thai government
+        movableHolidays.push(
+            '2024-04-11', // Additional Songkran holiday
+            '2024-05-06', // Bridge day for Coronation Day
+        );
+    } else if (year === 2025) {
+        // Placeholder for 2025 holidays when announced
+        movableHolidays.push(
+            // Add any extra holidays announced for 2025
+        );
+    }
+
+    return movableHolidays;
+}
+
+// Helper function to get approximate Buddhist Lent Days for a given year
+function getBuddhistLentDays(year) {
+    // This is an approximation - actual dates vary by lunar calendar
+    // Buddhist Lent (Vassa) starts on the first day of waning moon in the 11th month of Thai lunar calendar
+    // Usually falls in July or August - using approximate dates
+    const approxDates = [];
+
+    // For 2024-2027, the approximate dates would be:
+    if (year === 2024) {
+        approxDates.push('2024-07-17'); // Approximate date
+    } else if (year === 2025) {
+        approxDates.push('2025-07-06'); // Approximate date
+    } else if (year === 2026) {
+        approxDates.push('2026-07-25'); // Approximate date
+    } else if (year === 2027) {
+        approxDates.push('2027-07-15'); // Approximate date
+    }
+
+    return approxDates;
+}
+
+// Helper function to get lunar calendar holidays for a given year
+function getLunarHolidays(year) {
+    // Chinese New Year dates (according to lunar calendar, varies each year)
+    const chineseNewYear = {
+        2024: ['2024-02-10', '2024-02-11', '2024-02-12'],
+        2025: ['2025-01-29', '2025-01-30', '2025-01-31'],
+        2026: ['2026-02-17', '2026-02-18', '2026-02-19'],
+        2027: ['2027-02-06', '2027-02-07', '2027-02-08']
+    };
+
+    // Loy Krathong (usually in November)
+    const loyKrathong = {
+        2024: ['2024-11-15'],
+        2025: ['2025-11-04'],
+        2026: ['2026-10-24'],
+        2027: ['2027-11-13']
+    };
+
+    let holidays = [];
+    if (chineseNewYear[year]) {
+        holidays = holidays.concat(chineseNewYear[year]);
+    }
+    if (loyKrathong[year]) {
+        holidays = holidays.concat(loyKrathong[year]);
+    }
+
+    return holidays;
+}
+
+function calculateWorkdays() {
+    const startDate = document.getElementById('workdays-start-date').value;
+    const endDate = document.getElementById('workdays-end-date').value;
+
+    if (!startDate || !endDate) {
+        const resultDiv = document.getElementById('workdays-result');
+        resultDiv.innerHTML = '<p class="warning">กรุณาป้อนทั้งวันที่เริ่มต้นและวันที่สิ้นสุด</p>';
+        resultDiv.classList.add('show');
+        return;
+    }
+
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+        const resultDiv = document.getElementById('workdays-result');
+        resultDiv.innerHTML = '<p class="warning">กรุณาป้อนวันที่ที่ถูกต้อง</p>';
+        resultDiv.classList.add('show');
+        return;
+    }
+
+    // Ensure start date is before end date
+    if (start > end) {
+        // Swap dates to ensure correct order
+        [start, end] = [end, start];
+    }
+
+    // Calculate workdays
+    let workdays = 0;
+    let currentDate = new Date(start);
+    currentDate.setHours(0, 0, 0, 0); // Set time to 00:00:00 to avoid time offset issues
+
+    const holidays = [];
+    const allHolidays = [];
+
+    while (currentDate <= end) {
+        if (!isWeekend(currentDate) && !isPublicHoliday(currentDate)) {
+            workdays++;
+        } else {
+            // Store non-workdays for potential display
+            if (isWeekend(currentDate)) {
+                allHolidays.push({
+                    date: new Date(currentDate),
+                    type: 'weekend'
+                });
+            } else {
+                allHolidays.push({
+                    date: new Date(currentDate),
+                    type: 'holiday'
+                });
+            }
+        }
+
+        // Move to the next day
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    // Format dates for display
+    const startFormatted = start.toLocaleDateString('th-TH');
+    const endFormatted = end.toLocaleDateString('th-TH');
+
+    const resultDiv = document.getElementById('workdays-result');
+    resultDiv.innerHTML = `
+        <p><strong>วันที่เริ่มต้น:</strong> ${startFormatted}</p>
+        <p><strong>วันที่สิ้นสุด:</strong> ${endFormatted}</p>
+        <p><strong>จำนวนวันทำงาน:</strong> <span class="highlight">${workdays} วัน</span></p>
+        <p><em>ไม่รวมวันเสาร์-อาทิตย์ และวันหยุดราชการ/เทศกาล</em></p>
+    `;
+    resultDiv.classList.add('show');
+}

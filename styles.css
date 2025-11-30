@@ -73,6 +73,10 @@ main h2 {
     border-top: 5px solid #9b59b6;
 }
 
+.orange-section {
+    border-top: 5px solid #ff8000;
+}
+
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
