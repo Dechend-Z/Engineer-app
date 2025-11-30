@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เครื่องคิดเลขอเนกประสงค์</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>เครื่องคำนวนอเนกประสงค์</h1>
+            <p>คำนวณช่วงเวลาของวันที่, อายุการใช้งานแบตเตอรี่, การนับตัวอักษร, และการแปลงเลข</p>
+        </header>
+
+        <main class="main-layout">
+            <div class="column">
+                <!-- Time Between Dates Calculator -->
+                <section class="calculator-section red-section">
+                    <h2><span class="emoji">📅</span> เครื่องคำนวนช่วงเวลา</h2>
+
+                    <div class="calculator">
+                        <h3>คำนวณช่วงเวลาจากวันที่</h3>
+                        <div class="input-group">
+                            <label for="start-date">วันที่เริ่มต้น:</label>
+                            <input type="date" id="start-date">
+                        </div>
+                        <div class="input-group">
+                            <label for="end-date">วันที่สิ้นสุด:</label>
+                            <input type="date" id="end-date">
+                        </div>
+                        <button onclick="calculateDateDifference()">คำนวณความต่าง</button>
+                        <div id="date-result" class="result"></div>
+                    </div>
+
+                    <div class="calculator">
+                        <h3>จำนวนวันที่เพิ่มจากวันที่</h3>
+                        <div class="input-group">
+                            <label for="base-date">วันที่หลัก:</label>
+                            <input type="date" id="base-date">
+                        </div>
+                        <div class="input-group">
+                            <label for="days-to-add">จำนวนวันที่เพิ่ม:</label>
+                            <input type="number" id="days-to-add" placeholder="ป้อนจำนวนวัน">
+                        </div>
+                        <button onclick="addDaysToDate()">เพิ่มจำนวนวัน</button>
+                        <div id="add-days-result" class="result"></div>
+                    </div>
+                </section>
+
+                <!-- Number System Converter -->
+                <section class="calculator-section blue-section">
+                    <h2><span class="emoji">🔢</span> เครื่องแปลงเลขฐาน</h2>
+
+                    <div class="calculator">
+                        <h3>ตัวแปลงเลขฐานสิบ, เลขฐานสอง, เลขฐานสิบหก</h3>
+                        <div class="input-group">
+                            <label for="decimal-input">เลขฐานสิบ (Decimal):</label>
+                            <input type="number" id="decimal-input" placeholder="ป้อนเลขฐานสิบ" oninput="convertFromDecimal()">
+                        </div>
+                        <div class="input-group">
+                            <label for="binary-input">เลขฐานสอง (Binary):</label>
+                            <input type="text" id="binary-input" placeholder="ป้อนเลขฐานสอง" oninput="convertFromBinary()">
+                        </div>
+                        <div class="input-group">
+                            <label for="hex-input">เลขฐานสิบหก (Hexadecimal):</label>
+                            <input type="text" id="hex-input" placeholder="ป้อนเลขฐานสิบหก" oninput="convertFromHex()">
+                        </div>
+                        <div class="converter-controls">
+                            <button onclick="convertFromDecimal()">แปลงจากเลขฐานสิบ</button>
+                            <button onclick="convertFromBinary()">แปลงจากเลขฐานสอง</button>
+                            <button onclick="convertFromHex()">แปลงจากเลขฐานสิบหก</button>
+                            <button onclick="clearConverter()">ล้างข้อมูล</button>
+                        </div>
+                        <div id="converter-result" class="result"></div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="column">
+                <!-- Battery Life Calculator -->
+                <section class="calculator-section green-section">
+                    <h2><span class="emoji">🔋</span> เครื่องคำนวนอายุการใช้งานแบตเตอรี่</h2>
+
+                    <div class="calculator">
+                        <h3>ประมาณการอายุการใช้งานแบตเตอรี่</h3>
+                        <div class="input-group">
+                            <label for="battery-capacity">ความจุแบตเตอรี่ (mAh):</label>
+                            <input type="number" id="battery-capacity" placeholder="ป้อนความจุแบตเตอรี่">
+                        </div>
+                        <div class="input-group">
+                            <label for="device-consumption">การใช้พลังงานอุปกรณ์ (mA):</label>
+                            <input type="number" id="device-consumption" placeholder="ป้อนการใช้พลังงาน">
+                        </div>
+                        <div class="input-group">
+                            <label for="efficiency-factor">ปัจจัยประสิทธิภาพ (%):</label>
+                            <input type="number" id="efficiency-factor" value="90" placeholder="ป้อนปัจจัยประสิทธิภาพ">
+                        </div>
+                        <button onclick="calculateBatteryLife()">คำนวณอายุการใช้งานแบตเตอรี่</button>
+                        <div id="battery-result" class="result"></div>
+                    </div>
+
+                    <div class="calculator">
+                        <h3>เวลาคายประจุของแบตเตอรี่</h3>
+                        <div class="input-group">
+                            <label for="battery-capacity-2">ความจุแบตเตอรี่ (mAh):</label>
+                            <input type="number" id="battery-capacity-2" placeholder="ป้อนความจุแบตเตอรี่">
+                        </div>
+                        <div class="input-group">
+                            <label for="usage-percentage">เปอร์เซ็นต์การใช้งาน (%):</label>
+                            <input type="number" id="usage-percentage" value="100" placeholder="แบตเตอรี่ที่ใช้ไปกี่เปอร์เซ็นต์">
+                        </div>
+                        <div class="input-group">
+                            <label for="current-draw">การใช้กระแส (mA):</label>
+                            <input type="number" id="current-draw" placeholder="ป้อนการใช้กระแส">
+                        </div>
+                        <button onclick="calculateDischargeTime()">คำนวณเวลาคายประจุ</button>
+                        <div id="discharge-result" class="result"></div>
+                    </div>
+                </section>
+
+                <!-- Character Count Tool -->
+                <section class="calculator-section purple-section">
+                    <h2><span class="emoji">📝</span> เครื่องมือการนับตัวอักษร</h2>
+
+                    <div class="calculator">
+                        <h3>ตัววิเคราะห์ข้อความ</h3>
+                        <div class="input-group">
+                            <label for="input-text">ป้อนข้อความของคุณ:</label>
+                            <textarea id="input-text" placeholder="พิมพ์หรือวางข้อความของคุณที่นี่..." rows="6"></textarea>
+                        </div>
+                        <button onclick="analyzeText()">วิเคราะห์ข้อความ</button>
+                        <div id="text-result" class="result"></div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

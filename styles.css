@@ -1,0 +1,238 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f7fa;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: linear-gradient(135deg, #2c3e50, #1a2530);
+    color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.main-layout {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.column {
+    flex: 1;
+    min-width: 300px;
+}
+
+main h2 {
+    color: #2c3e50;
+    margin-bottom: 25px;
+    text-align: center;
+    font-size: 1.8rem;
+}
+
+.calculator-section {
+    margin-bottom: 30px;
+    animation: fadeIn 0.5s ease;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.red-section {
+    border-top: 5px solid #e74c3c;
+}
+
+.blue-section {
+    border-top: 5px solid #3498db;
+}
+
+.green-section {
+    border-top: 5px solid #2ecc71;
+}
+
+.purple-section {
+    border-top: 5px solid #9b59b6;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.calculator {
+    background-color: white;
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.calculator:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.calculator h3 {
+    color: #3498db;
+    margin-bottom: 20px;
+    font-size: 1.4rem;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+}
+
+.emoji {
+    margin-right: 10px;
+    font-size: 1.2em;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.input-group input,
+.input-group select,
+.input-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.input-group input:focus,
+.input-group select:focus,
+.input-group textarea:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.input-group textarea {
+    resize: vertical;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 100%;
+    margin-top: 10px;
+    margin-right: 5px;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+.converter-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.converter-controls button {
+    flex: 1;
+    min-width: calc(25% - 5px);
+    margin-top: 10px;
+}
+
+.result {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #e8f4fc;
+    border-radius: 5px;
+    border-left: 4px solid #3498db;
+    display: none;
+}
+
+.result.show {
+    display: block;
+}
+
+.result h4 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.result p {
+    margin: 5px 0;
+    color: #555;
+}
+
+.result .highlight {
+    font-weight: bold;
+    color: #27ae60;
+}
+
+.result .warning {
+    color: #e74c3c;
+}
+
+footer {
+    text-align: center;
+    margin-top: 40px;
+    padding: 20px;
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    header h1 {
+        font-size: 2rem;
+    }
+
+    .main-layout {
+        flex-direction: column;
+    }
+
+    .calculator {
+        padding: 15px;
+    }
+
+    .converter-controls {
+        flex-direction: column;
+    }
+
+    .converter-controls button {
+        min-width: 100%;
+    }
+}
