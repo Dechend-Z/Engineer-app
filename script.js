@@ -347,8 +347,33 @@ function isWeekend(date) {
     return dayOfWeek === 0 || dayOfWeek === 6; // Sunday or Saturday
 }
 
-function isPublicHoliday(date) {
-    // Format date to YYYY-MM-DD for comparison
+// Cache for storing holiday data by year
+let holidayCache = {};
+
+// Function to check if a date is a public holiday by parsing ICS data
+async function isPublicHoliday(date) {
+    const dateStr = date.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+    const year = date.getFullYear();
+
+    // Check if we have cached data for this year
+    if (!holidayCache[year]) {
+        try {
+            // Fetch holiday data for the specified year from ICS
+            const holidays = await fetchHolidaysFromICS(year);
+            holidayCache[year] = holidays;
+        } catch (error) {
+            console.error('Error fetching holidays from ICS:', error);
+            // Fallback to the local holiday calculation if ICS fails
+            return isPublicHolidayLocal(date);
+        }
+    }
+
+    // Check if the specific date is in the holiday list
+    return holidayCache[year].includes(dateStr);
+}
+
+// Fallback function using local holiday calculation
+function isPublicHolidayLocal(date) {
     const dateStr = date.toISOString().split('T')[0];
 
     // Fixed-date public holidays in Thailand
@@ -406,6 +431,110 @@ function isPublicHoliday(date) {
     }
 
     return false;
+}
+
+// Fetch holidays for a specific year from ICS file
+async function fetchHolidaysFromICS(year) {
+    // Use the Office Holidays ICS feed for Thailand
+    // This is a public ICS feed that contains Thai public holidays
+    const icsUrl = 'https://www.officeholidays.com/ics/thailand';
+
+    try {
+        const response = await fetch(icsUrl);
+        if (!response.ok) {
+            throw new Error(`ICS request failed with status ${response.status}`);
+        }
+
+        const icsText = await response.text();
+        const holidays = parseICSToHolidays(icsText, year);
+
+        return holidays;
+    } catch (error) {
+        console.error(`Error fetching holidays from ICS for year ${year}:`, error);
+        throw error;
+    }
+}
+
+// Parse ICS text to extract holiday dates for a specific year
+function parseICSToHolidays(icsText, targetYear) {
+    // Split the ICS text into lines
+    const lines = icsText.split(/\r?\n/);
+    let currentEvent = null;
+    const events = [];
+    let inEvent = false;
+
+    for (const line of lines) {
+        // Look for the start of an event
+        if (line.startsWith('BEGIN:VEVENT')) {
+            inEvent = true;
+            currentEvent = {};
+        }
+        // Look for the end of an event
+        else if (line.startsWith('END:VEVENT')) {
+            if (currentEvent && currentEvent.dtstart) {
+                events.push(currentEvent);
+            }
+            inEvent = false;
+            currentEvent = null;
+        }
+        // Parse event properties while inside an event
+        else if (inEvent) {
+            // Handle property names that might be split across lines
+            if (line.startsWith(' ') && currentEvent && Object.keys(currentEvent).length > 0) {
+                // Continuation line - append to the last property
+                const lastKey = Object.keys(currentEvent)[Object.keys(currentEvent).length - 1];
+                if (lastKey) {
+                    currentEvent[lastKey] += line.substring(1); // Remove the leading space
+                }
+            }
+            else {
+                // Regular property line
+                const colonIndex = line.indexOf(':');
+                if (colonIndex > 0) {
+                    const property = line.substring(0, colonIndex);
+                    const value = line.substring(colonIndex + 1);
+
+                    if (property === 'DTSTART' || property === 'DTSTART;VALUE=DATE') {
+                        currentEvent.dtstart = value;
+                    } else if (property === 'SUMMARY') {
+                        currentEvent.summary = value;
+                    }
+                }
+            }
+        }
+    }
+
+    // Extract dates for the target year
+    const holidayDates = [];
+
+    for (const event of events) {
+        if (event.dtstart) {
+            // The date should be in YYYYMMDD format in ICS
+            let dateStr = event.dtstart;
+
+            // Handle different ICS date formats
+            if (dateStr.includes('T')) {
+                // If it's a datetime format like YYYYMMDDTHHMMSSZ
+                dateStr = dateStr.substring(0, 8);
+            }
+
+            // Extract year from the date string
+            if (dateStr.length >= 8) {
+                const eventYear = parseInt(dateStr.substring(0, 4));
+
+                // Only include holidays from the target year
+                if (eventYear === targetYear) {
+                    // Convert YYYYMMDD to YYYY-MM-DD
+                    const year = dateStr.substring(0, 4);
+                    const month = dateStr.substring(4, 6);
+                    const day = dateStr.substring(6, 8);
+                    holidayDates.push(`${year}-${month}-${day}`);
+                }
+            }
+        }
+    }
+
+    return holidayDates;
 }
 
 // Helper function to get movable holidays that may change from year to year
@@ -482,7 +611,7 @@ function getLunarHolidays(year) {
     return holidays;
 }
 
-function calculateWorkdays() {
+async function calculateWorkdays() {
     const startDate = document.getElementById('workdays-start-date').value;
     const endDate = document.getElementById('workdays-end-date').value;
 
@@ -514,25 +643,41 @@ function calculateWorkdays() {
     let currentDate = new Date(start);
     currentDate.setHours(0, 0, 0, 0); // Set time to 00:00:00 to avoid time offset issues
 
-    const holidays = [];
-    const allHolidays = [];
+    // First, ensure we have holiday data for all required years
+    const startYear = start.getFullYear();
+    const endYear = end.getFullYear();
+
+    // Fetch holiday data for all years in the range (with a reasonable limit to avoid too many API calls)
+    for (let year = startYear; year <= endYear; year++) {
+        if (!holidayCache[year]) {
+            try {
+                // Show loading message while fetching data
+                const resultDiv = document.getElementById('workdays-result');
+                resultDiv.innerHTML = '<p>กำลังดึงข้อมูลวันหยุดราชการ...</p>';
+                resultDiv.classList.add('show');
+
+                const holidays = await fetchHolidaysForYear(year);
+                holidayCache[year] = holidays;
+            } catch (error) {
+                console.error(`Error fetching holidays for year ${year}:`, error);
+                // Continue with local calculation if API fails
+                const resultDiv = document.getElementById('workdays-result');
+                resultDiv.innerHTML = '<p>ใช้ข้อมูลวันหยุดราชการภายในเครื่อง (เกิดปัญหาในการดึงข้อมูลจาก API)</p>';
+                resultDiv.classList.add('show');
+            }
+        }
+    }
+
+    // Reset the date to start from the beginning again
+    currentDate = new Date(start);
+    currentDate.setHours(0, 0, 0, 0); // Set time to 00:00:00 to avoid time offset issues
 
     while (currentDate <= end) {
-        if (!isWeekend(currentDate) && !isPublicHoliday(currentDate)) {
+        const isWeekendDay = isWeekend(currentDate);
+        const isHoliday = await isPublicHoliday(currentDate); // This is now async
+
+        if (!isWeekendDay && !isHoliday) {
             workdays++;
-        } else {
-            // Store non-workdays for potential display
-            if (isWeekend(currentDate)) {
-                allHolidays.push({
-                    date: new Date(currentDate),
-                    type: 'weekend'
-                });
-            } else {
-                allHolidays.push({
-                    date: new Date(currentDate),
-                    type: 'holiday'
-                });
-            }
         }
 
         // Move to the next day
