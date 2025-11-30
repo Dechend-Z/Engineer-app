@@ -46,6 +46,20 @@
                         <button onclick="addDaysToDate()">เพิ่มจำนวนวัน</button>
                         <div id="add-days-result" class="result"></div>
                     </div>
+
+                    <div class="calculator">
+                        <h3>คำนวณจำนวนวันทำงาน (ไม่นับวันหยุดราชการ เสาร์-อาทิตย์ วันหยุดเทศกาล)</h3>
+                        <div class="input-group">
+                            <label for="workdays-start-date">วันที่เริ่มต้น:</label>
+                            <input type="date" id="workdays-start-date">
+                        </div>
+                        <div class="input-group">
+                            <label for="workdays-end-date">วันที่สิ้นสุด:</label>
+                            <input type="date" id="workdays-end-date">
+                        </div>
+                        <button onclick="calculateWorkdays()">คำนวณวันทำงาน</button>
+                        <div id="workdays-result" class="result"></div>
+                    </div>
                 </section>
 
                 <!-- Number System Converter -->
@@ -134,24 +148,6 @@
                     </div>
                 </section>
 
-                <!-- Workdays Calculator -->
-                <section class="calculator-section orange-section">
-                    <h2><span class="emoji">🗓️</span> เครื่องคำนวณวันทำงาน</h2>
-
-                    <div class="calculator">
-                        <h3>คำนวณจำนวนวันทำงาน (ไม่นับวันหยุดราชการ เสาร์-อาทิตย์ วันหยุดเทศกาล)</h3>
-                        <div class="input-group">
-                            <label for="workdays-start-date">วันที่เริ่มต้น:</label>
-                            <input type="date" id="workdays-start-date">
-                        </div>
-                        <div class="input-group">
-                            <label for="workdays-end-date">วันที่สิ้นสุด:</label>
-                            <input type="date" id="workdays-end-date">
-                        </div>
-                        <button onclick="calculateWorkdays()">คำนวณวันทำงาน</button>
-                        <div id="workdays-result" class="result"></div>
-                    </div>
-                </section>
             </div>
         </main>
     </div>
