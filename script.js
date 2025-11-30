@@ -644,22 +644,19 @@ function toggleSection(button) {
     const calculators = section.querySelectorAll('.calculator');
 
     // Toggle visibility of each calculator in the section
-    let allHidden = true;
     for (const calculator of calculators) {
         if (calculator.style.display === 'none' || calculator.style.display === '') {
             calculator.style.display = 'block';
-            allHidden = false;
         } else {
             calculator.style.display = 'none';
         }
     }
 
-    // Update the button text
-    if (allHidden) {
-        button.textContent = '+';
-    } else {
-        button.textContent = '−';
-    }
+    // Update the button text to show eye-based icon based on what the button will do next
+    // If calculators are now visible, show cross (to indicate it will hide when clicked)
+    // If calculators are now hidden, show open eye (to indicate it will show when clicked)
+    const areNowVisible = calculators[0].style.display !== 'none';
+    button.innerHTML = areNowVisible ? '⊖' : '👁️'; // Circle with minus to hide, open eye to show
 }
 
 // Helper function to get lunar calendar holidays for a given year
